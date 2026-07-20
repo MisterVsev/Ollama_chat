@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Редагувати' if preset else 'Новий' }} пресет{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2>{{ 'Редагувати' if preset else 'Створити' }} пресет</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="name" class="form-label">Назва</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ preset.name if preset else '' }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="model_name" class="form-label">Модель Ollama</label>
+                <input type="text" class="form-control" id="model_name" name="model_name" value="{{ preset.model_name if preset else 'gemma3:1b' }}">
+                <small class="form-text text-muted">Наприклад: gemma3:1b, llama3, mistral</small>
+            </div>
+            <div class="mb-3">
+                <label for="system_prompt" class="form-label">Системний промпт (початковий контекст)</label>
+                <textarea class="form-control" id="system_prompt" name="system_prompt" rows="4">{{ preset.system_prompt if preset else '' }}</textarea>
+                <small class="form-text text-muted">Цей текст буде передано моделі як системне повідомлення.</small>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="temperature" class="form-label">Температура (0-1)</label>
+                        <input type="number" step="0.1" min="0" max="1" class="form-control" id="temperature" name="temperature" value="{{ preset.temperature if preset else 0.7 }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="max_tokens" class="form-label">Максимум токенів</label>
+                        <input type="number" class="form-control" id="max_tokens" name="max_tokens" value="{{ preset.max_tokens if preset else 512 }}">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Зберегти</button>
+            <a href="{{ url_for('presets.list_presets') }}" class="btn btn-secondary">Скасувати</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

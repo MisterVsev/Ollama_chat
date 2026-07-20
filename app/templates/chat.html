@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Чат{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="d-flex justify-content-between mb-2">
+            <h4>Діалоги</h4>
+            <form method="POST" action="{{ url_for('chat.new_conversation') }}" class="d-inline">
+                <select name="preset_id" class="form-select form-select-sm d-inline w-auto">
+                    <option value="">Без пресету</option>
+                    {% for p in presets %}
+                        <option value="{{ p.id }}">{{ p.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary">+</button>
+            </form>
+        </div>
+        <ul class="list-group">
+            {% for conv in conversations %}
+                <li class="list-group-item {% if current_conv and current_conv.id == conv.id %}active{% endif %}">
+                    <a href="{{ url_for('chat.chat_detail', conv_id=conv.id) }}" class="text-decoration-none">
+                        {{ conv.title or 'Новий діалог' }}
+                    </a>
+                    <small class="d-block text-muted">{{ conv.updated_at.strftime('%d.%m %H:%M') }}</small>
+                </li>
+            {% else %}
+                <li class="list-group-item">Немає діалогів</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="col-md-9">
+        {% if current_conv %}
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>{{ current_conv.title or 'Діалог' }}</span>
+                    <span class="badge bg-secondary">
+                        {% if current_conv.preset %}
+                            Пресет: {{ current_conv.preset.name }}
+                        {% else %}
+                            Без пресету
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="card-body" style="height: 400px; overflow-y: auto;">
+                    {% for msg in messages %}
+                        <div class="mb-2">
+                            <strong>{{ 'Ви' if msg.role == 'user' else 'Асистент' }}:</strong>
+                            <span>{{ msg.content }}</span>
+                            <small class="text-muted ms-2">{{ msg.created_at.strftime('%H:%M') }}</small>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Почніть діалог, написавши повідомлення нижче.</p>
+                    {% endfor %}
+                </div>
+                <div class="card-footer">
+                    <form method="POST" action="{{ url_for('chat.send_message', conv_id=current_conv.id) }}">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="message" placeholder="Напишіть повідомлення..." required>
+                            <button class="btn btn-primary" type="submit">Надіслати</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info">Виберіть або створіть діалог зліва.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
