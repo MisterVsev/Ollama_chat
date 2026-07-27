@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import Config
+from app.routes.main import main_bp
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -22,6 +23,8 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(chat_bp, url_prefix='/chat')
     app.register_blueprint(presets_bp, url_prefix='/presets')
+    app.register_blueprint(main_bp)
+
 
     @app.route('/')
     def index():

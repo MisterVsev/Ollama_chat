@@ -23,6 +23,7 @@ def create_app():
     app.register_blueprint(chat_bp, url_prefix='/chat')
     app.register_blueprint(presets_bp, url_prefix='/presets')
 
+
     @app.route('/')
     def index():
         from flask import redirect, url_for
